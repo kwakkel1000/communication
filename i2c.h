@@ -28,34 +28,27 @@
 
 #include <avr/io.h>
 
-// I2C modes
-#define I2C_MASTER 0
-#define I2C_SLAVE 1
-
 // I2C directions
-#define I2C_READ 0
-#define I2C_WRITE 1
+#define I2C_READ  0x00
+#define I2C_WRITE 0x01
 
 // whether to raise interrupt when data received (SPIF bit received)
 #define I2C_NO_INTERRUPT 0
 #define I2C_INTERRUPT 1
 
 // slave or master with clock diviser
-#define SPI_SLAVE 0xF0
-#define SPI_MSTR_CLK4 0x00 /* chip clock/4 */
-#define SPI_MSTR_CLK16 0x01 /* chip clock/16 */
-#define SPI_MSTR_CLK64 0x02 /* chip clock/64 */
-#define SPI_MSTR_CLK128 0x03 /* chip clock/128 */
-#define SPI_MSTR_CLK2 0x04 /* chip clock/2 */
-#define SPI_MSTR_CLK8 0x05 /* chip clock/8 */
-#define SPI_MSTR_CLK32 0x06 /* chip clock/32 */
+#define I2C_PS1  0x00 /* prescale 1  TWPS0 0 TWPS1 0 */
+#define I2C_PS4  0x01 /* prescale 4  TWPS0 1 TWPS1 0 */
+#define I2C_PS16 0x02 /* prescale 16 TWPS0 0 TWPS1 1 */
+#define I2C_PS64 0x03 /* prescale 64 TWPS0 1 TWPS1 1 */
 
 class i2c
 {
     public:
         i2c();
         ~i2c();
-        void init(int mode);  // master / slave
+        void masterInit(uint8_t bitrate, uint8_t prescaler) // F_CPU/(16+2(TWBR)*prescaler) should be 400k
+        void slaveInit(uint8_t address)
         uint8_t getStatus();
         void write(uint8_t data);
         uint8_t read(bool ack);
