@@ -33,10 +33,15 @@ class usart
     public:
         usart();
         ~usart();
-        void init(uint baud);
-        void write(char data);
-        char read();
-        void putString(char* data);
+        //UBRR0H = (((F_CPU / (baud * 16UL)) -1) >> 8);
+        //UBRR0L = ((F_CPU / (baud * 16UL)) -1);
+
+        // 8MHz  9600baud: 8000000  / (9600 * 16) = 52
+        // 16MHz 9600baud: 16000000 / (9600 * 16) = 104
+        void init(uint8_t baud);
+        void write(uint8_t data);
+        uint8_t read();
+        void putString(uint8_t* data);
 };
 
 #endif // SPI_H

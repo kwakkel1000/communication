@@ -50,7 +50,7 @@ uint8_t i2c::getStatus()
 {
     uint8_t status;
     // mask status
-    status = TWSSR & 0xF8;
+    status = TWSR & 0xF8;
     return status;
 }
 

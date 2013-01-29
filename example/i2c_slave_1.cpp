@@ -22,10 +22,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 
-#ifndef F_CPU
-#define F_CPU 8000000L // 8MHz
-#endif
-// include common
+#include "aux_globals.h"
 
 #include "../include/usart.h"
 #include "../include/i2c.h"

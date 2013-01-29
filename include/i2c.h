@@ -22,7 +22,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 
-
 #ifndef I2C_H
 #define I2C_H
 
@@ -42,6 +41,9 @@
 #define I2C_PS16 0x02 /* prescale 16 TWPS0 0 TWPS1 1 */
 #define I2C_PS64 0x03 /* prescale 64 TWPS0 1 TWPS1 1 */
 
+#define SUCCESS 0x01
+#define ERROR   0x00
+
 class i2c
 {
     public:
@@ -50,8 +52,8 @@ class i2c
         // F_CPU 8000000  400k: 0x02, I2C_PS1 (8000000  / (16 + 2(02)*1)) = 8000000  / 20 = 400000
         // F_CPU 12000000 400k: 0x07, I2C_PS1 (12000000 / (16 + 2(07)*1)) = 12000000 / 30 = 400000
         // F_CPU 16000000 400k: 0x0C, I2C_PS1 (16000000 / (16 + 2(12)*1)) = 16000000 / 40 = 400000
-        void masterInit(uint8_t bitrate, uint8_t prescaler) // F_CPU/(16+2(bitrate)*prescaler) should be 400k
-        void slaveInit(uint8_t address)
+        void masterInit(uint8_t bitrate, uint8_t prescaler); // F_CPU/(16+2(bitrate)*prescaler) should be 400k
+        void slaveInit(uint8_t address);
         uint8_t getStatus();
         void write(uint8_t data);
         uint8_t read(bool ack); // ack only has to be true when its not the final byte to receive
@@ -60,7 +62,7 @@ class i2c
         void start();
         void stop();
         void broadcast(uint8_t data);                     // send to all slaves (address 0000000)
-        void selectSlave(uint8_t address, int direction); // direction(read/write)
+        uint8_t selectSlave(uint8_t address, uint8_t direction); // direction(read/write)
         // slave mode
         void slaveMatchAddress();
 };

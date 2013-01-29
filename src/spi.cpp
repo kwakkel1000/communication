@@ -67,7 +67,7 @@ void spi::disableSpi()
 uint8_t spi::write(uint8_t slave, uint8_t data)
 {
     selectSlave(slave);
-    uint8_t l_Data write(data);
+    uint8_t l_Data = write(data);
     deSelectSlave(slave);
     return l_Data;
 }

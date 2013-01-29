@@ -22,10 +22,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 
-#ifndef F_CPU
-#define F_CPU 8000000L // 8MHz
-#endif
-// include common
+#include "aux_globals.h"
 
 #include "../include/usart.h"
 #include "../include/spi.h"
@@ -39,63 +36,62 @@
 int main(void)
 {
     // USART
-    usart l_Usart;
-    char l_UsartReadBuf;
-    char l_UsartWriteBuf[];
+    usart* l_Usart;
+    uint8_t l_UsartReadBuf;
+    //uint8_t l_UsartWriteBuf[512];
 
     l_Usart = new usart();
-    l_Usart->init(9600);
-    l_UsartWriteBuf = "usart init done\r\n";
+    l_Usart->init((F_CPU / (9600 * 16UL)));
+    //strcpy(l_UsartWriteBuf, "usart init done\r\n");
+    //*l_UsartWriteBuf = (uint8_t)*"usart init done\r\n";
     // l_Usart->write("char data");
-    l_Usart->putString(l_UsartWriteBuf);
+    //l_Usart->putString(l_UsartWriteBuf);
+    l_Usart->putString((uint8_t*)"usart init done\r\n");
     l_UsartReadBuf = l_Usart->read();
 
 
     // SPI
-    spi l_Spi;
+    spi* l_Spi;
     uint8_t l_SpiReadBuf;
 
     l_Spi = new spi();
     l_Spi->init(SPI_MODE_1, SPI_MSB, SPI_NO_INTERRUPT, SPI_MSTR_CLK8); // picked random mode, msb first, no interrupt, 1000000Hz
 
-    l_UsartWriteBuf = "spi init done\r\n";
-    l_Usart->putString(l_UsartWriteBuf);
+    l_Usart->putString((uint8_t*)"spi init done\r\n");
 
     l_Spi->selectSlave(SPI_SLAVE_1);
-    l_Spi->write("HELLO SPI SLAVE 1");
+    //l_Spi->write((uint8_t)"HELLO SPI SLAVE 1");
+    l_Spi->write(0x05);
     l_SpiReadBuf = l_Spi->write(0xFF); // 0xFF no data?
     l_Spi->deSelectSlave(SPI_SLAVE_1);
 
-    l_UsartWriteBuf = l_SpiReadBuf + "\r\n";
-    usart->putString(l_UsartWriteBuf);
+    l_Usart->putString(l_SpiReadBuf + (uint8_t*)"\r\n");
 
     l_Spi->disableSpi();
 
 
     // I2C
-    i2c l_I2c;
+    i2c* l_I2c;
     uint8_t l_I2cReadBuf;
 
     l_I2c = new i2c();
-    l_I2c->masterInit(0x02, I2C_PS1) // 8000000 / (16 + 2(07)*1) = 400000
+    l_I2c->masterInit(0x02, I2C_PS1); // 8000000 / (16 + 2(07)*1) = 400000
 
-    l_UsartWriteBuf = "i2c master init done\r\n";
-    l_Usart->putString(l_UsartWriteBuf);
+    l_Usart->putString((uint8_t*)"i2c master init done\r\n");
 
     l_I2c->start();
     if (l_I2c->selectSlave(I2C_SLAVE_1, I2C_WRITE) == SUCCESS)
     {
-        l_I2c->write("HELLO I2C SLAVE 1");
+        //l_I2c->write((uint8_t)*"HELLO I2C SLAVE 1");
+        l_I2c->write(0x06);
         if (l_I2c->getStatus() != 0x28)
         {
-            l_UsartWriteBuf = "write to i2c slave 1 failed. status: " + l_I2c->getStatus() + "\r\n";
-            l_Usart->putString(l_UsartWriteBuf);
+            //l_Usart->putString((uint8_t*)"write to i2c slave 1 failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
         }
     }
     else
     {
-        l_UsartWriteBuf = "slaveSelect i2c slave 1 write failed. status: " + l_I2c->getStatus() + "\r\n";
-        l_Usart->putString(l_UsartWriteBuf);
+        //l_Usart->putString((uint8_t*)"slaveSelect i2c slave 1 write failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
     }
     l_I2c->start();
     if (l_I2c->selectSlave(I2C_SLAVE_1, I2C_READ) == SUCCESS)
@@ -103,14 +99,12 @@ int main(void)
         l_I2cReadBuf = l_I2c->read(false); // read only 1 byte so ack = false
         if (l_I2c->getStatus() != 0x58) // 0x50 when ack = true
         {
-            l_UsartWriteBuf = "read from i2c slave 1 failed. status: " + l_I2c->getStatus() + "\r\n";
-            l_Usart->putString(l_UsartWriteBuf);
+            //l_Usart->putString((uint8_t*)"read from i2c slave 1 failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
         }
     }
     else
     {
-        l_UsartWriteBuf = "slaveSelect i2c slave 1 read failed. status: " + l_I2c->getStatus() + "\r\n";
-        l_Usart->putString(l_UsartWriteBuf);
+        //l_Usart->putString((uint8_t*)"slaveSelect i2c slave 1 read failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
     }
     l_I2c->stop();
 }

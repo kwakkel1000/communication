@@ -32,18 +32,20 @@ usart::~usart()
 {
 }
 
-void usart::init(uint baud)
+void usart::init(uint8_t baud)
 {
     // set baud
-    UBRR0H = (((F_CPU / (baud * 16UL)) -1) >> 8);
-    UBRR0L = ((F_CPU / (baud * 16UL)) -1);
+    //UBRR0H = (((F_CPU / (baud * 16UL)) -1) >> 8);
+    //UBRR0L = ((F_CPU / (baud * 16UL)) -1);
+    UBRR0H = ((baud -1) >> 8);
+    UBRR0L = (baud -1);
     // enable receiver and transmitter
     UCSR0B = (1<<RXEN0)|(1<<TXEN0);
     // set frame format
     UCSR0C = (1<<USBS0)|(3<<UCSZ00); // defined option later in .h
 }
 
-void usart::write(char data)
+void usart::write(uint8_t data)
 {
     // Wait for empty transmit buffer //
     while ((UCSR0A & (1<<UDRE0)) == 0) {};
@@ -51,7 +53,7 @@ void usart::write(char data)
     UDR0 = data;
 }
 
-char usart::read()
+uint8_t usart::read()
 {
     // Wait for data to be received //
     while ((UCSR0A & (1<<RXC0)) == 0) {};
@@ -59,11 +61,11 @@ char usart::read()
     return UDR0;
 }
 
-void usart::putString(char* data)
+void usart::putString(uint8_t* data)
 {
     while(*data != 0x00)
     {
-        USART_send(*data);
+        write(*data);
         data++;
     }
 }
