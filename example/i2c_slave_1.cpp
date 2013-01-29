@@ -27,9 +27,11 @@
 #include "../include/usart.h"
 #include "../include/i2c.h"
 
+#include <avr/interrupt.h>
+
 #define I2C_ADDRESS 0b1010000
 
-i2c g_I2c;
+i2c* g_I2c;
 
 ISR(TWI_vect)
 {
