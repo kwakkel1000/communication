@@ -22,7 +22,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 
-#include "spi.h"
+#include "../include/spi.h"
 
 spi::spi()
 {
@@ -93,5 +93,6 @@ uint8_t spi::write(uint8_t data)
 uint8_t spi::read(uint8_t data)
 {
     SPDR = data;
+    //while (!(SPSR & (1<<SPIF))); // not sure yet.
     return SPDR;
 }

@@ -47,11 +47,14 @@ class i2c
     public:
         i2c();
         ~i2c();
-        void masterInit(uint8_t bitrate, uint8_t prescaler) // F_CPU/(16+2(TWBR)*prescaler) should be 400k
+        // F_CPU 8000000  400k: 0x02, I2C_PS1 (8000000  / (16 + 2(02)*1)) = 8000000  / 20 = 400000
+        // F_CPU 12000000 400k: 0x07, I2C_PS1 (12000000 / (16 + 2(07)*1)) = 12000000 / 30 = 400000
+        // F_CPU 16000000 400k: 0x0C, I2C_PS1 (16000000 / (16 + 2(12)*1)) = 16000000 / 40 = 400000
+        void masterInit(uint8_t bitrate, uint8_t prescaler) // F_CPU/(16+2(bitrate)*prescaler) should be 400k
         void slaveInit(uint8_t address)
         uint8_t getStatus();
         void write(uint8_t data);
-        uint8_t read(bool ack);
+        uint8_t read(bool ack); // ack only has to be true when its not the final byte to receive
 
         // master mode
         void start();
