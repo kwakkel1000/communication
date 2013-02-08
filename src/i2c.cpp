@@ -24,14 +24,6 @@
 
 #include "../include/i2c.h"
 
-i2c::i2c()
-{
-}
-
-i2c::~i2c()
-{
-}
-
 void i2c::masterInit(uint8_t bitrate, uint8_t prescaler)
 {
     //TWBR=0x01;    // bit rate
