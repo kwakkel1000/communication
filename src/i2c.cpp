@@ -2,7 +2,7 @@
 //
 // @ Project : atmega communication
 // @ File Name : i2c.cpp
-// @ Date : 24-01-2013
+// @ Date : 08-02-2013
 // @ Author : Gijs Kwakkel
 //
 //
@@ -90,9 +90,9 @@ void i2c::broadcast(uint8_t data)
 
 uint8_t i2c::selectSlave(uint8_t address, uint8_t direction)
 {
-    address &= ~0xFE;             // clear last bit
-    address |= direction & 0xFE;  // set last bit with direction
-    write(address);
+    //address &= ~0xFE;             // clear last bit
+    //address |= direction & 0xFE;  // set last bit with direction
+    write(address | direction);
     if (I2C_STATUS != TW_MT_SLA_ACK)
         return ERROR;
     return SUCCESS;
