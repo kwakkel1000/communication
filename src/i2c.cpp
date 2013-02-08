@@ -93,7 +93,7 @@ uint8_t i2c::selectSlave(uint8_t address, uint8_t direction)
     //address &= ~0xFE;             // clear last bit
     //address |= direction & 0xFE;  // set last bit with direction
     write(address | direction);
-    if (I2C_STATUS != TW_MT_SLA_ACK)
+    if (I2C_STATUS != TW_MT_SLA_ACK && I2C_STATUS != TW_MR_SLA_ACK)
         return ERROR;
     return SUCCESS;
 }
