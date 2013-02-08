@@ -46,13 +46,13 @@ void i2c::slaveInit(uint8_t address)
     TWAR=address;
 }
 
-uint8_t i2c::getStatus()
+/*uint8_t i2c::getStatus()
 {
     uint8_t status;
     // mask status
     status = TWSR & 0xF8;
     return status;
-}
+}*/
 
 void i2c::write(uint8_t data)
 {
@@ -101,7 +101,7 @@ uint8_t i2c::selectSlave(uint8_t address, uint8_t direction)
     address &= ~0xFE;             // clear last bit
     address |= direction & 0xFE;  // set last bit with direction
     write(address);
-    if (getStatus() != 0x18)
+    if (I2C_STATUS != TW_MT_SLA_ACK)
         return ERROR;
     return SUCCESS;
 }
@@ -110,7 +110,8 @@ uint8_t i2c::selectSlave(uint8_t address, uint8_t direction)
 // slave mode
 void i2c::slaveMatchAddress() //Function to match the slave address and slave dirction bit(write)
 {
-    while (((TWSR & 0xF8)!= 0xA8) && ((TWSR & 0xF8)!= 0x60))	// Loop till correct acknoledgement have been received
+    //while (((TWSR & 0xF8)!= 0xA8) && ((TWSR & 0xF8)!= 0x60))	// Loop till correct acknoledgement have been received
+    while ((I2C_STATUS != TW_ST_SLA_ACK) && (I2C_STATUS != TW_SR_SLA_ACK))	// Loop till correct acknoledgement have been received
     {
         // Get acknowlegement, Enable TWI, Clear TWI interrupt flag
         TWCR=(1<<TWEA)|(1<<TWEN)|(1<<TWINT);
